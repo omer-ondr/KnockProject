@@ -31,7 +31,7 @@ namespace KnockProject.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Vector>("Embedding")
-                        .HasColumnType("vector(1536)");
+                        .HasColumnType("vector(384)");
 
                     b.Property<string>("TextContent")
                         .IsRequired()

@@ -480,3 +480,20 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
+
+# .NET Build Artifacts
+bin/
+obj/
+
+# IDE
+.vscode/
+*.user
+
+# ASP.NET Secrets
+appsettings.Development.json
+
+# Seed data (büyük vektör dosyası)
+seed.json
+
+# Python cache
+*.pyc

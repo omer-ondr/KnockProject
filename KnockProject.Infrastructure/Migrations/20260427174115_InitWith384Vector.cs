@@ -7,7 +7,7 @@ using Pgvector;
 namespace KnockProject.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class InitWith384Vector : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -21,7 +21,7 @@ namespace KnockProject.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     TextContent = table.Column<string>(type: "text", nullable: false),
-                    Embedding = table.Column<Vector>(type: "vector(1536)", nullable: true)
+                    Embedding = table.Column<Vector>(type: "vector(384)", nullable: true)
                 },
                 constraints: table =>
                 {

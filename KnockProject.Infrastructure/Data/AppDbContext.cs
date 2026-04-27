@@ -22,6 +22,6 @@ public class AppDbContext : DbContext
         // OpenAI'ın text-embedding-3-small modeli standart 1536 boyut döner.
         modelBuilder.Entity<HistoricalMemory>()
             .Property(h => h.Embedding)
-            .HasColumnType("vector(1536)");
+            .HasColumnType("vector(384)");
     }
 }

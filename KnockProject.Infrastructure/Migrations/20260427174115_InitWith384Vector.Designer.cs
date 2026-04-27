@@ -13,8 +13,8 @@ using Pgvector;
 namespace KnockProject.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260427145026_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260427174115_InitWith384Vector")]
+    partial class InitWith384Vector
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -34,7 +34,7 @@ namespace KnockProject.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<Vector>("Embedding")
-                        .HasColumnType("vector(1536)");
+                        .HasColumnType("vector(384)");
 
                     b.Property<string>("TextContent")
                         .IsRequired()
