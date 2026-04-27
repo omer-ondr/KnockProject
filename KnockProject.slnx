@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="KnockProject.API/KnockProject.API.csproj" />
+  <Project Path="KnockProject.Core/KnockProject.Core.csproj" />
+  <Project Path="KnockProject.Infrastructure/KnockProject.Infrastructure.csproj" />
+</Solution>
