@@ -26,10 +26,8 @@ public class PollinationsImageService : IImageService
         // Dinamik prompt: [METAPHOR] + sabit 1973 estetik suffix
         var prompt =
             $"1973 analog photography style, {safeMetaphor}, " +
-            "rusty sheriff badge engraved with a surreal symbol, placed on a weathered wooden saloon table, " +
-            "35mm film grain, warm Kodak-style color grading, muted earthy tones, " +
-            "high contrast shadows, dusty atmosphere, cinematic depth of field, " +
-            "weathered textures, Pat Garrett aesthetic, 8k resolution, masterpiece.";
+            "weathered textures, 35mm film grain, warm Kodak-style color grading, " +
+            "cinematic depth of field";
 
         var seed = Random.Shared.Next(1, 1_000_000);
         var encodedPrompt = Uri.EscapeDataString(prompt);
