@@ -11,27 +11,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputSection = document.querySelector('.input-section');
 
     // SignalR Connection
-    let connectionId = null;
     const connection = new signalR.HubConnectionBuilder()
         .withUrl("http://localhost:5101/progressHub")
         .configureLogging(signalR.LogLevel.Information)
         .build();
 
-        loadingStatus.textContent = 'Zamanda yolculuk başlıyor...';
+    connection.on("ReceiveProgress", (message) => {
+        if (loadingStatus) {
+            loadingStatus.textContent = message;
+        }
+    });
 
-        try {
-            // Actual API Call to Role 1's Backend
-            const response = await fetch('http://localhost:5101/api/farewell', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text, connectionId: connection.connectionId
-        .then(() => {
-            console.log("SignalR Connected.");
-            // Hub'tan ID almak yerine connection.connectionId kullanabiliriz.
-            // Fakat proxy falan varsa garanti olsun. Her iki durum da ok,
-            // signalr kütüphanesinin connection.connectionId özelliği de vardır.
-            connectionId = connection.connectionId;
-        })
+    connection.start()
+        .then(() => console.log("SignalR Connected."))
         .catch(err => console.error("SignalR Connection Error: ", err));
 
     submitBtn.addEventListener('click', async () => {
@@ -41,13 +33,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // UI State: Loading
         inputSection.classList.add('hidden');
         loadingSection.classList.remove('hidden');
+        if (loadingStatus) loadingStatus.textContent = 'Zamanda yolculuk başlıyor...';
 
         try {
             // Actual API Call to Role 1's Backend
             const response = await fetch('http://localhost:5101/api/farewell', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: text }) // Matches 'FarewellRequest'
+                body: JSON.stringify({ message: text, connectionId: connection.connectionId })
             });
 
             if (!response.ok) {

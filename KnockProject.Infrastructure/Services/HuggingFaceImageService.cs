@@ -31,8 +31,9 @@ public class PollinationsImageService : IImageService
 
         var seed = Random.Shared.Next(1, 1_000_000);
         var encodedPrompt = Uri.EscapeDataString(prompt);
+        // Hızlı üretim için model 'turbo' yapıldı, çözünürlük 512'ye çekildi
         var url = $"https://image.pollinations.ai/prompt/{encodedPrompt}" +
-                  $"?seed={seed}&width=512&height=512&model=flux&nologo=true";
+                  $"?seed={seed}&width=512&height=512&model=turbo&nologo=true";
 
         Console.WriteLine($"[ImageService] Metaphor: '{safeMetaphor}' | Seed: {seed}");
 

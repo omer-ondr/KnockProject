@@ -47,6 +47,7 @@ public class FarewellController : ControllerBase
             if (!string.IsNullOrEmpty(request.ConnectionId))
             {
                 await _hub.Clients.Client(request.ConnectionId).SendAsync("ReceiveProgress", message);
+                await Task.Delay(400); // Gecikmeyi kısalttım (400ms)
             }
         }
 
@@ -75,37 +76,34 @@ public class FarewellController : ControllerBase
         if (closestMemory is null)
             return StatusCode(500, new { error = "Veritabanında hafıza bulunamadı. Seeding yapıldı mı?" });
 
-        // 3. RAG
-        _logger.LogInformation("[3/5] Epigraf üretiliyor...");
-        await NotifyClient("Hatıradan hüzünlü bir şiir (epigraf) kaleme alınıyor...");
-        string epigraph;
+        // 3. Paralel Epigraph & Metafor
+        _logger.LogInformation("[3/5] Epigraf ve Metafor paralel üretiliyor...");
+        await NotifyClient("Hatıralardan şiir ve görsel metafor kaleme alınıyor...");
+        
+        string epigraph = "Kapıyı çalarken içimde 1973 yankılanıyor...";
+        string visualMetaphor = "rusted sheriff badge";
+
         try
         {
-            epigraph = await _llm.GenerateEpigraphAsync(request.Message, closestMemory.TextContent);
+            // İki isteği aynı anda atıyoruz (Bekleme süresi yarı yarıya düşüyor)
+            var epigraphTask = _llm.GenerateEpigraphAsync(request.Message, closestMemory.TextContent);
+            var metaphorTask = _llm.GenerateVisualMetaphorAsync(request.Message); // Epigraph'ı beklemeden direk mesajdan metafor ürettiriyoruz!
+            
+            await Task.WhenAll(epigraphTask, metaphorTask);
+            
+            epigraph = await epigraphTask;
+            visualMetaphor = await metaphorTask;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Epigraf hatası");
-            epigraph = "Kapıyı çalarken içimde 1973 yankılanıyor...";
+            _logger.LogError(ex, "Epigraf veya Metafor hatası");
         }
 
-        // 4. Metafor
-        _logger.LogInformation("[4/5] Görsel metafor üretiliyor...");
-        await NotifyClient("Şiirden bir görsel simge çıkarılıyor...");
-        string visualMetaphor;
-        try
-        {
-            visualMetaphor = await _llm.GenerateVisualMetaphorAsync(epigraph);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Metafor hatası");
-            visualMetaphor = "rusted sheriff badge";
-        }
+        _logger.LogInformation("[4/5] Metafor: '{Metaphor}'", visualMetaphor);
 
         // 5. Image
         _logger.LogInformation("[5/5] Rozet görseli üretiliyor...");
-        await NotifyClient("Rozetin resmediliyor (bu işlem biraz zaman alabilir)...");
+        await NotifyClient("Rozetin resmediliyor (bu işlem birkaç saniye sürecek)...");
         string imageData;
         try
         {

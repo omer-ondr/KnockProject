@@ -42,10 +42,14 @@ var app = builder.Build();
 // });
 
 // app.UseHttpsRedirection(); // Kapalı — lokal geliştirme
-app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+app.UseCors(policy => policy
+    .WithOrigins("http://localhost:8000", "http://127.0.0.1:8000") // Frontend URL'leri
+    .AllowAnyMethod()
+    .AllowAnyHeader()
+    .AllowCredentials()); // SignalR için zorunlu
 app.UseAuthorization();
 app.MapControllers();
-app.MapHub<KnockProject.API.Hubs.ProgressHub>("/progressHub"); // <-- SignalR Hub Eklendi
+app.MapHub<KnockProject.API.Hubs.ProgressHub>("/progressHub");
 
 // Data Seeding
 using (var scope = app.Services.CreateScope())
