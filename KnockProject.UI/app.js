@@ -5,9 +5,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetBtn = document.getElementById('reset-btn');
     const farewellText = document.getElementById('farewell-text');
     const loadingSection = document.getElementById('loading');
+    const loadingStatus = document.getElementById('loading-status');
     const resultBadge = document.getElementById('result-badge');
     const resultEpigraph = document.getElementById('result-epigraph');
     const inputSection = document.querySelector('.input-section');
+
+    // SignalR Connection
+    let connectionId = null;
+    const connection = new signalR.HubConnectionBuilder()
+        .withUrl("http://localhost:5101/progressHub")
+        .configureLogging(signalR.LogLevel.Information)
+        .build();
+
+        loadingStatus.textContent = 'Zamanda yolculuk başlıyor...';
+
+        try {
+            // Actual API Call to Role 1's Backend
+            const response = await fetch('http://localhost:5101/api/farewell', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text, connectionId: connection.connectionId
+        .then(() => {
+            console.log("SignalR Connected.");
+            // Hub'tan ID almak yerine connection.connectionId kullanabiliriz.
+            // Fakat proxy falan varsa garanti olsun. Her iki durum da ok,
+            // signalr kütüphanesinin connection.connectionId özelliği de vardır.
+            connectionId = connection.connectionId;
+        })
+        .catch(err => console.error("SignalR Connection Error: ", err));
 
     submitBtn.addEventListener('click', async () => {
         const text = farewellText.value.trim();

@@ -24,10 +24,11 @@ builder.Services.AddScoped<IEmbeddingService, MockEmbeddingService>(); // Bypass
 builder.Services.AddScoped<ILlmService, PollinationsLlmService>();
 builder.Services.AddScoped<IImageService, PollinationsImageService>();
 
-// 4. Controllers + OpenAPI / Swagger
+// 4. Controllers + OpenAPI / SignalR
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddCors();
+builder.Services.AddSignalR(); // <-- SignalR Eklendi
 // builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
@@ -44,6 +45,7 @@ var app = builder.Build();
 app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<KnockProject.API.Hubs.ProgressHub>("/progressHub"); // <-- SignalR Hub Eklendi
 
 // Data Seeding
 using (var scope = app.Services.CreateScope())
