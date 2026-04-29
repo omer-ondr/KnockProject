@@ -59,7 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
             setTimeout(() => {
                 resolve({
                     epigraph: "You laid your gun down on the riverbank, but the river keeps flowing without you.",
-                    imageUrl: "https://images.unsplash.com/photo-1582298538104-fe2e74cb28fb?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" // A placeholder rusty/sheriff themed image
+                    imageUrl: "badge_placeholder.png"
                 });
             }, 2500);
         });
