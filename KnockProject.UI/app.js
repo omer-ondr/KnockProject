@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 resultBadge.src = data.badgeImage;
             } else if (data.badgeImage === "image_generation_unavailable") {
                 // Fallback to local image if DALL-E/SDXL failed on backend
-                resultBadge.src = "badge_placeholder.png"; 
+                resultBadge.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='512' height='512' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%231a1a1a'/%3E%3Ctext x='256' y='256' text-anchor='middle' dominant-baseline='central' font-family='serif' font-size='24' fill='%23777'%3EImage Unavailable%3C/text%3E%3C/svg%3E"; 
             } else {
                 // Assume base64
                 resultBadge.src = `data:image/png;base64,${data.badgeImage}`;
