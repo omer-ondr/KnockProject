@@ -497,3 +497,6 @@ seed.json
 
 # Python cache
 *.pyc
+
+# Role 3 Local Designer Notes
+role3_notes/
