@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knockin' on Heaven's Door - A Digital Memory</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="grain-overlay"></div>
+    <div class="container">
+        <header>
+            <h1>Knockin' on Heaven's Door</h1>
+            <p class="subtitle">Leave your badge at the door. Every farewell creates an echo from 1973.</p>
+        </header>
+
+        <main id="interaction-area">
+            <div class="input-section">
+                <textarea id="farewell-text" placeholder="Write your farewell here..." rows="4"></textarea>
+                <button id="submit-btn">Leave the Badge</button>
+            </div>
+            <div id="loading" class="hidden">
+                <p>Echoing through time...</p>
+                <div class="spinner"></div>
+            </div>
+        </main>
+
+        <section id="memory-wall" class="hidden">
+            <div class="badge-container">
+                <img id="result-badge" src="" alt="Generated 1973 Sheriff Badge">
+            </div>
+            <div class="epigraph-container">
+                <p id="result-epigraph"></p>
+            </div>
+            <button id="reset-btn">Another Farewell</button>
+        </section>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
