@@ -20,26 +20,28 @@ builder.Services.AddHttpClient("Pollinations", client =>
 });
 
 // 3. AI Servisleri (Pollinations.ai — ücretsiz, key gerektirmez)
-builder.Services.AddScoped<IEmbeddingService, HuggingFaceEmbeddingService>(); // lokal Flask
+builder.Services.AddScoped<IEmbeddingService, MockEmbeddingService>(); // Bypass Python for live test
 builder.Services.AddScoped<ILlmService, PollinationsLlmService>();
 builder.Services.AddScoped<IImageService, PollinationsImageService>();
 
 // 4. Controllers + OpenAPI / Swagger
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddOpenApi();
+builder.Services.AddCors();
+// builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
 // Swagger UI → http://localhost:5101
-app.MapOpenApi();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/openapi/v1.json", "KnockProject API V1");
-    c.RoutePrefix = string.Empty;
-});
+// app.UseSwagger();
+// app.UseSwaggerUI(c =>
+// {
+//     c.SwaggerEndpoint("/swagger/v1/swagger.json", "KnockProject API V1");
+//     c.RoutePrefix = string.Empty;
+// });
 
 // app.UseHttpsRedirection(); // Kapalı — lokal geliştirme
+app.UseCors(policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 app.UseAuthorization();
 app.MapControllers();
 
@@ -47,6 +49,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    db.Database.EnsureCreated(); // Ensure tables are created
     var seedPath = Path.Combine(Directory.GetCurrentDirectory(), "seed.json");
     await DataSeeder.SeedAsync(db, seedPath);
 }

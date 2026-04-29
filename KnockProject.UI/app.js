@@ -18,29 +18,41 @@ document.addEventListener('DOMContentLoaded', () => {
         loadingSection.classList.remove('hidden');
 
         try {
-            // Replace with actual API endpoint later
-            // const response = await fetch('/api/farewell', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ farewell: text })
-            // });
-            // const data = await response.json();
+            // Actual API Call to Role 1's Backend
+            const response = await fetch('http://localhost:5101/api/farewell', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: text }) // Matches 'FarewellRequest'
+            });
 
-            // Mock Data for Demo Purposes
-            const data = await mockApiCall(text);
+            if (!response.ok) {
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
 
             // UI State: Success
             loadingSection.classList.add('hidden');
             interactionArea.classList.add('hidden');
             
-            resultBadge.src = data.imageUrl;
+            // Set image source. Check if it's base64 or direct URL
+            if (data.badgeImage.startsWith('http') || data.badgeImage.startsWith('data:image')) {
+                resultBadge.src = data.badgeImage;
+            } else if (data.badgeImage === "image_generation_unavailable") {
+                // Fallback to local image if DALL-E/SDXL failed on backend
+                resultBadge.src = "badge_placeholder.png"; 
+            } else {
+                // Assume base64
+                resultBadge.src = `data:image/png;base64,${data.badgeImage}`;
+            }
+
             resultEpigraph.textContent = `"${data.epigraph}"`;
             
             memoryWall.classList.remove('hidden');
             
         } catch (error) {
             console.error("Failed to connect to the timeline.", error);
-            alert("The connection to 1973 was lost. Please try again.");
+            alert("The connection to 1973 was lost. Please ensure the backend API is running.");
             loadingSection.classList.add('hidden');
             inputSection.classList.remove('hidden');
         }
@@ -52,16 +64,4 @@ document.addEventListener('DOMContentLoaded', () => {
         interactionArea.classList.remove('hidden');
         inputSection.classList.remove('hidden');
     });
-
-    // Fake API call to simulate network delay and return mock data
-    function mockApiCall(text) {
-        return new Promise(resolve => {
-            setTimeout(() => {
-                resolve({
-                    epigraph: "You laid your gun down on the riverbank, but the river keeps flowing without you.",
-                    imageUrl: "badge_placeholder.png"
-                });
-            }, 2500);
-        });
-    }
 });
