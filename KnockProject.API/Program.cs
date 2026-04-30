@@ -24,6 +24,7 @@ builder.Services.AddScoped<IEmbeddingService, MockEmbeddingService>(); // Bypass
 builder.Services.AddScoped<ILlmService, PollinationsLlmService>();
 builder.Services.AddScoped<IImageService, PollinationsImageService>();
 builder.Services.AddHttpClient<IYouTubeMusicService, YouTubeMusicService>();
+builder.Services.AddHttpClient<ITextToSpeechService, GoogleTtsService>();
 
 // 4. Controllers + OpenAPI / SignalR
 builder.Services.AddControllers();

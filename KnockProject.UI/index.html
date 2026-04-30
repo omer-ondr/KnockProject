@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Knockin' on Heaven's Door - A Digital Memory</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap"
+        rel="stylesheet">
 </head>
+
 <body>
+    <!-- Sinematik 1973 Kumlanma Efekti (CSS'te ayarlandı) -->
     <div class="grain-overlay"></div>
+
     <div class="container">
         <header>
             <h1>Knockin' on Heaven's Door</h1>
@@ -28,7 +33,7 @@
 
         <section id="memory-wall" class="hidden">
             <div class="badge-container">
-                <img id="result-badge" src="" alt="Generated 1973 Sheriff Badge">
+                <img id="result-badge" src="" alt="Generated 1973 Sheriff Badge" crossorigin="anonymous">
             </div>
             <div class="epigraph-container">
                 <p id="result-epigraph"></p>
@@ -36,10 +41,25 @@
             <div id="music-player-container" class="hidden">
                 <iframe id="youtube-player" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
-            <button id="reset-btn">Another Farewell</button>
+
+            <!-- YENİ: Kartpostal İndirme Butonu (Başlangıçta gizli) -->
+            <div style="display: flex; gap: 10px; justify-content: center; margin-top: 20px;">
+                <button id="download-btn"
+                    style="padding: 10px 20px; background-color: #d4af37; color: #1a1a1a; border: none; cursor: pointer; font-family: 'Courier Prime', monospace; font-weight: bold; border-radius: 4px; transition: 0.3s;">📸
+                    Bu Anı Arşivle</button>
+                <button id="reset-btn">Another Farewell</button>
+            </div>
         </section>
     </div>
+
+    <!-- SignalR (Backend İletişimi) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+
+    <!-- YENİ: Html2Canvas Kütüphanesi (Ekran Görüntüsü Almak İçin) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Kendi JS Dosyamız -->
     <script src="app.js"></script>
 </body>
+
 </html>

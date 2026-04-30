@@ -20,6 +20,7 @@ public class FarewellController : ControllerBase
     private readonly IYouTubeMusicService _youtube;
     private readonly IHubContext<ProgressHub> _hub;
     private readonly ILogger<FarewellController> _logger;
+    private readonly ITextToSpeechService _tts;
 
     public FarewellController(
         AppDbContext db,
@@ -28,7 +29,8 @@ public class FarewellController : ControllerBase
         IImageService image,
         IYouTubeMusicService youtube,
         IHubContext<ProgressHub> hub,
-        ILogger<FarewellController> logger)
+        ILogger<FarewellController> logger,
+        ITextToSpeechService tts)
     {
         _db = db;
         _embedding = embedding;
@@ -37,6 +39,7 @@ public class FarewellController : ControllerBase
         _youtube = youtube;
         _hub = hub;
         _logger = logger;
+        _tts = tts;
     }
 
     [HttpPost]
@@ -128,6 +131,8 @@ public class FarewellController : ControllerBase
             imageData = "image_generation_unavailable";
         }
         
+        string? epigraphAudioBase64 = null;
+
         await NotifyClient("Tamamlandı.");
 
         return Ok(new
@@ -140,7 +145,8 @@ public class FarewellController : ControllerBase
                 id = closestMemory.Id
             },
             badgeImage = imageData,
-            musicTrack = musicTrack
+            musicTrack = musicTrack,
+            epigraphAudioBase64 = epigraphAudioBase64
         });
     }
 }

@@ -102,12 +102,25 @@ public class PollinationsLlmService : ILlmService
             }
 
             var json = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(json);
-            return doc.RootElement
-                .GetProperty("choices")[0]
-                .GetProperty("message")
-                .GetProperty("content")
-                .GetString();
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                if (doc.RootElement.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+                {
+                    var message = choices[0].GetProperty("message");
+                    if (message.TryGetProperty("content", out var contentElement))
+                    {
+                        return contentElement.GetString();
+                    }
+                }
+                Console.WriteLine($"[LlmService] Beklenmeyen JSON Formatı: {json}");
+                return null;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[LlmService] JSON Parse Hatası: {ex.Message}. Yanıt: {json}");
+                return null;
+            }
         }
         catch (Exception ex)
         {
