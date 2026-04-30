@@ -2,6 +2,7 @@ using KnockProject.Core.Interfaces;
 using Microsoft.Extensions.Configuration;
 using System.Text;
 using System.Text.Json;
+using System.Text.RegularExpressions;
 
 namespace KnockProject.Infrastructure.Services;
 
@@ -19,51 +20,60 @@ public class PollinationsLlmService : ILlmService
         _http = factory.CreateClient("Pollinations");
     }
 
-    public async Task<string> GenerateEpigraphAsync(string userFarewell, string historicalContext)
+    public async Task<LlmFarewellResult> AnalyzeFarewellAsync(string userFarewell, string historicalContext)
     {
         var systemPrompt =
-            "Sen Bob Dylan tarzı yazan melankolik bir Türk şairsin. " +
-            "Sana verilen veda metni ve 1973 anısını harmanlayarak " +
-            "tek satırlık, derin ve melankolik bir Türkçe epigraf yazarsın. " +
-            "SADECE epigrafı yaz, başka hiçbir şey ekleme.";
+            "You are an AI generating a melancholic 1973-themed farewell response. You MUST return ONLY a raw, valid JSON object. No markdown tags (like ```json), no explanations.\n" +
+            "JSON Schema: { \"epigraph\": \"string\", \"metaphor\": \"string\", \"recommendedSongQuery\": \"string\" }\n\n" +
+            "epigraph: Türkçe yazılmış, 1-2 cümlelik, şiirsel, melankolik ve 1973 konseptine (hippiler, analog yaşam, şerifler veya tükenmişlik) uygun bir veda sözü.\n\n" +
+            "metaphor: A short 3-4 word concrete physical object in English symbolizing the epigraph (e.g. 'rusted sheriff badge', 'broken guitar string', 'old military dog tag').\n\n" +
+            "recommendedSongQuery: Kullanıcının duygu durumuna uyan ve KESİNLİKLE 1973 veya öncesinde çıkmış gerçek bir şarkı. Formatı tam olarak şu olmalı: '[Sanatçı Adı] - [Şarkı Adı] 1973 official audio'.";
 
         var userPrompt =
             $"Kullanıcının vedası: \"{userFarewell}\"\n" +
             $"1973 anısı: \"{historicalContext}\"\n\n" +
-            "Bu ikisini harmanlayan tek satırlık melankolik Türkçe epigrafı yaz:";
+            "Bu ikisini harmanlayan JSON yanıtını yaz:";
 
-        var result = await CallAsync(systemPrompt, userPrompt, maxTokens: 100, temperature: 0.85);
+        var jsonResult = await CallAsync(systemPrompt, userPrompt, maxTokens: 300, temperature: 0.85, useJson: true);
 
-        if (result is null)
-            return $"Kapıyı çalarken içimde 1973 yankılanıyor — \"{userFarewell[..Math.Min(35, userFarewell.Length)]}...\"";
+        var fallbackResult = new LlmFarewellResult("Geçmişin sessizliğinde kayboldum...", "rusted sheriff badge", "Pink Floyd - Time 1973 official audio");
 
-        return result.Trim().Split('\n')[0].Trim();
+        if (string.IsNullOrWhiteSpace(jsonResult))
+            return fallbackResult;
+
+        try
+        {
+            var cleanJson = jsonResult.Replace("```json", "").Replace("```", "").Trim();
+
+            var epigraphMatch = Regex.Match(cleanJson, @"""epigraph""\s*:\s*""(.*?)""");
+            var metaphorMatch = Regex.Match(cleanJson, @"""metaphor""\s*:\s*""(.*?)""");
+            var songMatch = Regex.Match(cleanJson, @"""recommendedSongQuery""\s*:\s*""(.*?)""");
+
+            var epigraph = epigraphMatch.Success && !string.IsNullOrWhiteSpace(epigraphMatch.Groups[1].Value) 
+                ? epigraphMatch.Groups[1].Value 
+                : "Geçmişin sessizliğinde kayboldum...";
+
+            var metaphor = metaphorMatch.Success && !string.IsNullOrWhiteSpace(metaphorMatch.Groups[1].Value) 
+                ? metaphorMatch.Groups[1].Value 
+                : "rusted sheriff badge";
+
+            var songQuery = songMatch.Success && !string.IsNullOrWhiteSpace(songMatch.Groups[1].Value) 
+                ? songMatch.Groups[1].Value 
+                : "Pink Floyd - Time 1973 official audio";
+
+            return new LlmFarewellResult(epigraph, metaphor, songQuery);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"[Regex Parse Error]: {ex.Message} - Payload: {jsonResult}");
+        }
+
+        return fallbackResult;
     }
 
-    public async Task<string> GenerateVisualMetaphorAsync(string epigraph)
+    private async Task<string?> CallAsync(string system, string user, int maxTokens, double temperature, bool useJson = false)
     {
-        var systemPrompt =
-            "You are a surrealist art director for 1973-era Western films. " +
-            "Respond with ONLY a short 3-4 word concrete physical object in English. " +
-            "No explanations, no punctuation, just the object name.";
-
-        var userPrompt =
-            $"Give a 3-4 word concrete visual object (physical thing) symbolizing: \"{epigraph}\"\n" +
-            "Examples: broken guitar string, rusted door handle, old military dog tag\n" +
-            "Object:";
-
-        var result = await CallAsync(systemPrompt, userPrompt, maxTokens: 20, temperature: 0.75);
-
-        if (result is null)
-            return "rusted sheriff badge";
-
-        var metaphor = result.Trim().Split('\n')[0].Trim().TrimEnd('.', ',', ';', '"');
-        return string.Join(' ', metaphor.Split(' ', StringSplitOptions.RemoveEmptyEntries).Take(5));
-    }
-
-    private async Task<string?> CallAsync(string system, string user, int maxTokens, double temperature)
-    {
-        var payload = JsonSerializer.Serialize(new
+        var payloadObj = new
         {
             model = "openai",
             messages = new[]
@@ -73,8 +83,11 @@ public class PollinationsLlmService : ILlmService
             },
             max_tokens = maxTokens,
             temperature,
+            response_format = useJson ? new { type = "json_object" } : null,
             stream = false
-        });
+        };
+
+        var payload = JsonSerializer.Serialize(payloadObj, new JsonSerializerOptions { DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull });
 
         try
         {

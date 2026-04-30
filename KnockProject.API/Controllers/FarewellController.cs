@@ -17,6 +17,7 @@ public class FarewellController : ControllerBase
     private readonly IEmbeddingService _embedding;
     private readonly ILlmService _llm;
     private readonly IImageService _image;
+    private readonly IYouTubeMusicService _youtube;
     private readonly IHubContext<ProgressHub> _hub;
     private readonly ILogger<FarewellController> _logger;
 
@@ -25,6 +26,7 @@ public class FarewellController : ControllerBase
         IEmbeddingService embedding,
         ILlmService llm,
         IImageService image,
+        IYouTubeMusicService youtube,
         IHubContext<ProgressHub> hub,
         ILogger<FarewellController> logger)
     {
@@ -32,6 +34,7 @@ public class FarewellController : ControllerBase
         _embedding = embedding;
         _llm = llm;
         _image = image;
+        _youtube = youtube;
         _hub = hub;
         _logger = logger;
     }
@@ -82,27 +85,37 @@ public class FarewellController : ControllerBase
         
         string epigraph = "Kapıyı çalarken içimde 1973 yankılanıyor...";
         string visualMetaphor = "rusted sheriff badge";
+        string recommendedSongQuery = "Pink Floyd Time 1973";
 
         try
         {
-            // İki isteği aynı anda atıyoruz (Bekleme süresi yarı yarıya düşüyor)
-            var epigraphTask = _llm.GenerateEpigraphAsync(request.Message, closestMemory.TextContent);
-            var metaphorTask = _llm.GenerateVisualMetaphorAsync(request.Message); // Epigraph'ı beklemeden direk mesajdan metafor ürettiriyoruz!
-            
-            await Task.WhenAll(epigraphTask, metaphorTask);
-            
-            epigraph = await epigraphTask;
-            visualMetaphor = await metaphorTask;
+            var analysisResult = await _llm.AnalyzeFarewellAsync(request.Message, closestMemory.TextContent);
+            epigraph = analysisResult.Epigraph;
+            recommendedSongQuery = analysisResult.RecommendedSongQuery;
+            visualMetaphor = analysisResult.Metaphor;
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Epigraf veya Metafor hatası");
+            _logger.LogError(ex, "LLM Analiz hatası");
         }
 
-        _logger.LogInformation("[4/5] Metafor: '{Metaphor}'", visualMetaphor);
+        _logger.LogInformation("[4/6] Metafor: '{Metaphor}'", visualMetaphor);
 
-        // 5. Image
-        _logger.LogInformation("[5/5] Rozet görseli üretiliyor...");
+        // 5. YouTube Music
+        _logger.LogInformation("[5/6] YouTube'da müzik aranıyor: {Query}", recommendedSongQuery);
+        await NotifyClient("Sana özel 1973 yılından bir şarkı bulunuyor...");
+        MusicTrackDto? musicTrack = null;
+        try
+        {
+            musicTrack = await _youtube.SearchMusicAsync(recommendedSongQuery);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "YouTube Music hatası");
+        }
+
+        // 6. Image
+        _logger.LogInformation("[6/6] Rozet görseli üretiliyor...");
         await NotifyClient("Rozetin resmediliyor (bu işlem birkaç saniye sürecek)...");
         string imageData;
         try
@@ -126,7 +139,8 @@ public class FarewellController : ControllerBase
                 text = closestMemory.TextContent,
                 id = closestMemory.Id
             },
-            badgeImage = imageData
+            badgeImage = imageData,
+            musicTrack = musicTrack
         });
     }
 }

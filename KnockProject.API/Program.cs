@@ -23,6 +23,7 @@ builder.Services.AddHttpClient("Pollinations", client =>
 builder.Services.AddScoped<IEmbeddingService, MockEmbeddingService>(); // Bypass Python for live test
 builder.Services.AddScoped<ILlmService, PollinationsLlmService>();
 builder.Services.AddScoped<IImageService, PollinationsImageService>();
+builder.Services.AddHttpClient<IYouTubeMusicService, YouTubeMusicService>();
 
 // 4. Controllers + OpenAPI / SignalR
 builder.Services.AddControllers();

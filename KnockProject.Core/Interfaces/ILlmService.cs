@@ -1,13 +1,12 @@
 namespace KnockProject.Core.Interfaces;
 
+public record LlmFarewellResult(string Epigraph, string Metaphor, string RecommendedSongQuery);
+
 public interface ILlmService
 {
-    /// <summary>Kullanıcı vedası + 1973 anısından melankolik Türkçe epigraf üretir.</summary>
-    Task<string> GenerateEpigraphAsync(string userFarewell, string historicalContext);
-
     /// <summary>
-    /// Epigrafı simgeleyen 3-4 kelimelik somut İngilizce görsel metafor üretir.
-    /// Örn: "broken guitar string", "rusty door handle", "old military dog tag"
+    /// Kullanıcının veda mesajını ve 1973 anısını tek seferde analiz ederek 
+    /// epigraf, İngilizce görsel metafor ve şarkı önerisini döner.
     /// </summary>
-    Task<string> GenerateVisualMetaphorAsync(string epigraph);
+    Task<LlmFarewellResult> AnalyzeFarewellAsync(string userFarewell, string historicalContext);
 }

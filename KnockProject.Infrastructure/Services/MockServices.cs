@@ -10,11 +10,12 @@ public class MockEmbeddingService : IEmbeddingService
 
 public class MockLlmService : ILlmService
 {
-    public Task<string> GenerateEpigraphAsync(string userFarewell, string historicalContext) =>
-        Task.FromResult($"[MOCK EPİGRAF]: '{userFarewell}' hüznü, 1973'ün tozlu yollarına karıştı.");
-
-    public Task<string> GenerateVisualMetaphorAsync(string epigraph) =>
-        Task.FromResult("rusted sheriff badge");
+    public Task<LlmFarewellResult> AnalyzeFarewellAsync(string userFarewell, string historicalContext) =>
+        Task.FromResult(new LlmFarewellResult(
+            $"[MOCK EPİGRAF]: '{userFarewell}' hüznü, 1973'ün tozlu yollarına karıştı.",
+            "rusted sheriff badge",
+            "Pink Floyd Time 1973"
+        ));
 }
 
 public class MockImageService : IImageService

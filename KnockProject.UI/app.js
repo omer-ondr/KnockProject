@@ -9,6 +9,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const resultBadge = document.getElementById('result-badge');
     const resultEpigraph = document.getElementById('result-epigraph');
     const inputSection = document.querySelector('.input-section');
+    const musicPlayerContainer = document.getElementById('music-player-container');
+    const youtubePlayer = document.getElementById('youtube-player');
 
     // SignalR Connection
     const connection = new signalR.HubConnectionBuilder()
@@ -66,6 +68,21 @@ document.addEventListener('DOMContentLoaded', () => {
 
             resultEpigraph.textContent = `"${data.epigraph}"`;
             
+            // Handle YouTube Music Player
+            if (data.musicTrack && data.musicTrack.videoUrl) {
+                // Extract Video ID from e.g. https://www.youtube.com/watch?v=VIDEO_ID
+                const urlParams = new URLSearchParams(new URL(data.musicTrack.videoUrl).search);
+                const videoId = urlParams.get('v');
+                if (videoId) {
+                    youtubePlayer.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&controls=1`;
+                    musicPlayerContainer.classList.remove('hidden');
+                } else {
+                    musicPlayerContainer.classList.add('hidden');
+                }
+            } else {
+                musicPlayerContainer.classList.add('hidden');
+            }
+
             memoryWall.classList.remove('hidden');
             
         } catch (error) {
@@ -78,6 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resetBtn.addEventListener('click', () => {
         memoryWall.classList.add('hidden');
+        musicPlayerContainer.classList.add('hidden');
+        youtubePlayer.src = ''; // Stop audio playback
         farewellText.value = '';
         interactionArea.classList.remove('hidden');
         inputSection.classList.remove('hidden');
