@@ -10,7 +10,7 @@ public class HuggingFaceEmbeddingService : IEmbeddingService
 {
     private readonly HttpClient _http;
     private readonly string? _apiKey;
-    private const string CloudModelUrl = "https://api-inference.huggingface.co/pipeline/feature-extraction/sentence-transformers/all-MiniLM-L6-v2";
+    private const string CloudModelUrl = "https://api-inference.huggingface.co/models/sentence-transformers/all-MiniLM-L6-v2";
     private const string LocalEmbedUrl = "http://localhost:5500/embed";
 
     public HuggingFaceEmbeddingService(IHttpClientFactory factory, IConfiguration config)
