@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // SignalR Bağlantısı
     const connection = new signalR.HubConnectionBuilder()
-        .withUrl("http://localhost:5101/progressHub")
+        .withUrl("https://knock-project-api.onrender.com/progressHub")
         .configureLogging(signalR.LogLevel.Information)
         .build();
 
@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // API İsteği
-            const response = await fetch('http://localhost:5101/api/farewell', {
+            const response = await fetch('https://knock-project-api.onrender.com/api/farewell', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ message: text, connectionId: connection.connectionId })
