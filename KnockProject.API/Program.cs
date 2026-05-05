@@ -53,7 +53,8 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHub<KnockProject.API.Hubs.ProgressHub>("/progressHub");
 
-// Data Seeding
+// Data Seeding - Disabled for production stability (Run SQL manually)
+/*
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
@@ -61,5 +62,6 @@ using (var scope = app.Services.CreateScope())
     var seedPath = Path.Combine(Directory.GetCurrentDirectory(), "seed.json");
     await DataSeeder.SeedAsync(db, seedPath);
 }
+*/
 
 app.Run();
