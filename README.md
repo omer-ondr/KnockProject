@@ -2,7 +2,13 @@
 
 > "Leave your badge at the door. Every farewell creates an echo from 1973."
 
-KnockProject is an AI-integrated, philosophical web application that serves as a "Digital Memory Wall" for modern farewells. By combining advanced Retrieval-Augmented Generation (RAG) architecture with generative visual models, the project transforms a user's personal farewell into a historical echo rooted in the melancholic aesthetics of 1973.
+### 🌐 Live Production Environments
+*   **Primary Interactive Experience:** [https://knock-project-ai.vercel.app/](https://knock-project-ai.vercel.app/)
+*   **RESTful Backend Infrastructure:** [https://knock-project-api.onrender.com](https://knock-project-api.onrender.com)
+
+---
+
+**KnockProject** is an AI-integrated, philosophical web application that serves as a "Digital Memory Wall" for modern farewells. By combining advanced Retrieval-Augmented Generation (RAG) architecture with generative multi-sensory models (Visual & Auditory), the project transforms a user's personal farewell into a historical echo rooted in the melancholic aesthetics of 1973.
 
 ## 📜 Artistic Vision & Concept
 
@@ -19,9 +25,10 @@ The application is built upon a robust, layered architecture integrating modern 
 1. **Backend API (.NET 8):** A clean, modular RESTful API architecture divided into Core, Infrastructure, and API layers.
 2. **Data Layer (PostgreSQL + pgvector):** The heart of the RAG system. A PostgreSQL database utilizing the `pgvector` extension and Entity Framework Core to store and perform Cosine Similarity searches on 1973 historical text embeddings.
 3. **AI Services (Infrastructure Layer):**
-   - **Embedding Service:** Converts historical texts and user inputs into vector arrays (using OpenAI `text-embedding-3-small`).
-   - **LLM Service:** A language model (OpenAI/Anthropic) strictly prompted to act as a 1973 poet, synthesizing the user's input with the retrieved historical vector to generate the epigraph.
-   - **Image Generation Service:** A visual model (DALL-E/Stable Diffusion) that generates a 1973 analog film, rusty sheriff badge image based on strict aesthetic prompt templates.
+   - **Embedding Service:** Converts historical texts and user inputs into vector arrays (utilizing HuggingFace Inference API in production).
+   - **LLM Service:** A language model (Pollinations.ai / OpenAI) strictly prompted to act as a 1973 poet, synthesizing the user's input with the retrieved historical vector to generate the epigraph.
+   - **Image Generation Service:** A visual model (Pollinations.ai / Stable Diffusion) that generates a 1973 analog film, rusty sheriff badge image based on strict aesthetic prompt templates.
+   - **Auditory Synthesis Service:** Integration with YouTube Music API to find and play contextually relevant tracks from 1973, completing the sensory ritual.
 4. **Frontend (Vanilla HTML/CSS/JS):** A minimalist, dark-themed, 1973 analog-style user interface designed to maximize emotional resonance without modern UI distractions.
 
 ## 🚀 Setup & Installation
