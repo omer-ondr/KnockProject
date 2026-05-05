@@ -45,10 +45,10 @@ var app = builder.Build();
 
 // app.UseHttpsRedirection(); // Kapalı — lokal geliştirme
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:8000", "http://127.0.0.1:8000", "https://knock-project-ai.vercel.app") // Frontend URL'leri
+    .SetIsOriginAllowed(_ => true) // Tüm originlere izin ver
     .AllowAnyMethod()
     .AllowAnyHeader()
-    .AllowCredentials()); // SignalR için zorunlu
+    .AllowCredentials());
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<KnockProject.API.Hubs.ProgressHub>("/progressHub");
