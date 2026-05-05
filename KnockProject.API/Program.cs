@@ -20,7 +20,7 @@ builder.Services.AddHttpClient("Pollinations", client =>
 });
 
 // 3. AI Servisleri (Pollinations.ai — ücretsiz, key gerektirmez)
-builder.Services.AddScoped<IEmbeddingService, MockEmbeddingService>(); // Bypass Python for live test
+builder.Services.AddScoped<IEmbeddingService, HuggingFaceEmbeddingService>(); // Real cloud RAG enabled
 builder.Services.AddScoped<ILlmService, PollinationsLlmService>();
 builder.Services.AddScoped<IImageService, PollinationsImageService>();
 builder.Services.AddHttpClient<IYouTubeMusicService, YouTubeMusicService>();
