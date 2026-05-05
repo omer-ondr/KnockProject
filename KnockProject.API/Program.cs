@@ -45,7 +45,7 @@ var app = builder.Build();
 
 // app.UseHttpsRedirection(); // Kapalı — lokal geliştirme
 app.UseCors(policy => policy
-    .WithOrigins("http://localhost:8000", "http://127.0.0.1:8000") // Frontend URL'leri
+    .WithOrigins("http://localhost:8000", "http://127.0.0.1:8000", "https://knock-project-ai.vercel.app") // Frontend URL'leri
     .AllowAnyMethod()
     .AllowAnyHeader()
     .AllowCredentials()); // SignalR için zorunlu
