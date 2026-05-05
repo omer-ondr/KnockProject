@@ -5,6 +5,7 @@
 ### 🌐 Live Production Environments
 *   **Primary Interactive Experience:** [https://knock-project-ai.vercel.app/](https://knock-project-ai.vercel.app/)
 *   **RESTful Backend Infrastructure:** [https://knock-project-api.onrender.com](https://knock-project-api.onrender.com)
+*   **Project Demonstration (Video):** [https://www.youtube.com/watch?v=V0QSkZ9WIRI](https://www.youtube.com/watch?v=V0QSkZ9WIRI)
 
 ---
 
